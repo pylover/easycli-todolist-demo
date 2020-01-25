@@ -1,7 +1,7 @@
 import functools
 from os.path import join, dirname
 
-from easycli import Root, SubCommand, Argument
+import easycli
 
 
 __version__ = '0.1.0'
@@ -41,7 +41,7 @@ def itemcompleter(prefix, action, parser, parsed_args):
 
 
 ListArgument = functools.partial(
-    Argument,
+    easycli.Argument,
     'list',
     default='',
     help='List name',
@@ -50,14 +50,14 @@ ListArgument = functools.partial(
 
 
 ItemArgument = functools.partial(
-    Argument,
+    easycli.Argument,
     'item',
     help='Item name',
     completer=itemcompleter
 )
 
 
-class Delete(SubCommand):
+class Delete(easycli.SubCommand):
     __command__ = 'delete'
     __aliases__ = ['d']
     __arguments__ = [
@@ -69,7 +69,7 @@ class Delete(SubCommand):
         delete(args.list, args.item)
 
 
-class Show(SubCommand):
+class Show(easycli.SubCommand):
     __command__ = 'show'
     __aliases__ = ['s', 'l']
     __arguments__ = [
@@ -87,7 +87,7 @@ class Show(SubCommand):
                 print(f'{l}\t{i}')
 
 
-class Append(SubCommand):
+class Append(easycli.SubCommand):
     __command__ = 'append'
     __aliases__ = ['add', 'a']
     __arguments__ = [
@@ -99,11 +99,15 @@ class Append(SubCommand):
         append(args.list, args.item)
 
 
-class Todo(Root):
+class Todo(easycli.Root):
     __help__ = 'Simple todo list'
     __completion__ = True
     __arguments__ = [
-        Argument('-v', '--version', action='store_true', help='Show version'),
+        easycli.Argument(
+            '-v', '--version',
+            action='store_true',
+            help='Show version'
+        ),
         Append,
         Show,
         Delete,
