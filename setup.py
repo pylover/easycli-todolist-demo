@@ -1,7 +1,7 @@
 import re
-
 from os.path import join, dirname
-from setuptools import setup, find_packages
+
+from setuptools import setup
 
 
 # reading package version (same way the sqlalchemy does)
@@ -17,7 +17,6 @@ dependencies = [
 setup(
     name='todo',
     version=version,
-    packages=find_packages(exclude=['tests']),
     py_modules=['todo'],
     install_requires=dependencies,
     include_package_data=True,
