@@ -1,3 +1,5 @@
+import functools
+
 from easycli import Root, SubCommand, Argument
 
 from . import db
@@ -6,26 +8,35 @@ from . import db
 def listcompleter(prefix, action, parser, parsed_args):
     return set(l for l, _ in db.getall())
 
+
 def itemcompleter(prefix, action, parser, parsed_args):
     list_ = parsed_args.list
     return list(i for l, i in db.getall() if l == list_)
+
+
+ListArgument = functools.partial(
+    Argument,
+    'list',
+    default='',
+    help='List name',
+    completer=listcompleter
+)
+
+
+ItemArgument = functools.partial(
+    Argument,
+    'item',
+    help='Item name',
+    completer=itemcompleter
+)
 
 
 class Delete(SubCommand):
     __command__ = 'delete'
     __aliases__ = ['d']
     __arguments__ = [
-        Argument(
-            'list',
-            default='',
-            help='example: foo',
-            completer=listcompleter
-        ),
-        Argument(
-            'item',
-            help='Item to delete',
-            completer=itemcompleter
-        )
+        ListArgument(),
+        ItemArgument(),
     ]
 
     def __call__(self, args):
@@ -36,13 +47,7 @@ class Show(SubCommand):
     __command__ = 'show'
     __aliases__ = ['s', 'l']
     __arguments__ = [
-        Argument(
-            'list',
-            nargs='?',
-            default='',
-            help='example: foo',
-            completer=listcompleter
-        )
+        ListArgument(nargs='?')
     ]
 
     def __call__(self, args):
@@ -60,17 +65,8 @@ class Append(SubCommand):
     __command__ = 'append'
     __aliases__ = ['add', 'a']
     __arguments__ = [
-        Argument(
-            'list',
-            default='',
-            help='example: foo',
-            completer=listcompleter
-        ),
-        Argument(
-            'item',
-            help='Item to add',
-            completer=itemcompleter
-        )
+        ListArgument(),
+        ItemArgument(),
     ]
 
     def __call__(self, args):
