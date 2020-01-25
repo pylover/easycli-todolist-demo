@@ -1,2 +1,29 @@
-# easycli-todolist-demo
-A Todo list command line interface using https://github.com/pylover/easycli
+# bee
+
+```bash
+pip install .
+bee completion install
+bee --help
+```
+
+---
+
+```
+usage: bee [-h] {login,show,s,l,info,i,append,add,a,delete,d,completion} ...
+
+Hive client
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Sub commands:
+  {login,show,s,l,info,i,append,add,a,delete,d,completion}
+    login
+    show (s, l)
+    info (i)
+    append (add, a)
+    delete (d)
+    completion          Bash auto completion using argcomplete python package.
+```
+
+
