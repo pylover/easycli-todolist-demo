@@ -1,5 +1,5 @@
-import functools
 from os.path import join, dirname
+import functools
 
 import easycli
 
@@ -13,22 +13,10 @@ opendbfile = functools.partial(
 )
 
 
-def append(list_, item):
-    with opendbfile('a+') as f:
-        f.write(f'{list_},{item}\n')
-
-
 def getall(*a, **k):
     with opendbfile(*a, **k) as f:
         for l in f:
             yield l.strip().split(',', 1)
-
-
-def delete(list_, item):
-    data = [(l, i) for l, i in getall() if l != list_ or i != item]
-    with opendbfile('w') as f:
-        for l, i in data:
-            f.write(f'{l},{i}\n')
 
 
 def listcompleter(prefix, action, parser, parsed_args):
@@ -66,7 +54,26 @@ class Delete(easycli.SubCommand):
     ]
 
     def __call__(self, args):
-        delete(args.list, args.item)
+        list_ = args.list
+        item = args.item
+
+        data = [(l, i) for l, i in getall() if l != list_ or i != item]
+        with opendbfile('w') as f:
+            for l, i in data:
+                f.write(f'{l},{i}\n')
+
+
+class Append(easycli.SubCommand):
+    __command__ = 'append'
+    __aliases__ = ['add', 'a']
+    __arguments__ = [
+        ListArgument(),
+        ItemArgument(),
+    ]
+
+    def __call__(self, args):
+        with opendbfile('a+') as f:
+            f.write(f'{args.list},{args.item}\n')
 
 
 class Show(easycli.SubCommand):
@@ -87,18 +94,6 @@ class Show(easycli.SubCommand):
                 print(f'{l}\t{i}')
 
 
-class Append(easycli.SubCommand):
-    __command__ = 'append'
-    __aliases__ = ['add', 'a']
-    __arguments__ = [
-        ListArgument(),
-        ItemArgument(),
-    ]
-
-    def __call__(self, args):
-        append(args.list, args.item)
-
-
 class Todo(easycli.Root):
     __help__ = 'Simple todo list'
     __completion__ = True
@@ -110,7 +105,7 @@ class Todo(easycli.Root):
         ),
         Append,
         Show,
-        Delete,
+        Delete
     ]
 
     def __call__(self, args):
