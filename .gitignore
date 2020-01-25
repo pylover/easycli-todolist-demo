@@ -97,3 +97,5 @@ data
 
 # pytest
 .pytest_cache
+
+data.csv
